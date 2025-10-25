@@ -1,0 +1,42 @@
+{
+  "name": "wrestling-club",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore",
+    "dev:web": "pnpm --filter web-app dev",
+    "dev:native": "pnpm --filter native-app dev",
+    "dev:backend": "pnpm --filter @packages/backend dev",
+    "start:web": "pnpm --filter web-app start",
+    "start:native": "pnpm --filter native-app start",
+    "android": "pnpm --filter native-app android",
+    "ios": "pnpm --filter native-app ios",
+    "run:android": "pnpm --filter native-app android",
+    "run:ios": "pnpm --filter native-app ios",
+    "start:android": "pnpm --filter native-app android",
+    "start:ios": "pnpm --filter native-app ios",
+    "web:expo": "pnpm --filter native-app web",
+    "build:web": "pnpm --filter web-app build",
+    "build:native": "pnpm --filter native-app build",
+    "lint:web": "pnpm --filter web-app lint",
+    "setup:backend": "pnpm --filter @packages/backend setup",
+    "dev:web+backend": "concurrently \"pnpm dev:backend\" \"pnpm dev:web\"",
+    "dev:native+backend": "concurrently \"pnpm dev:backend\" \"pnpm dev:native\"",
+    "dev:all": "concurrently \"pnpm dev:backend\" \"pnpm dev:web\" \"pnpm dev:native\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prettier": "3.5.3",
+    "turbo": "2.5.8"
+  },
+  "engines": {
+    "node": ">=18.8.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packageManager": "pnpm@9.0.0"
+}
