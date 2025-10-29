@@ -1,0 +1,38 @@
+{
+  "apps": [
+    {
+      "id": "club-1",
+      "name": "Elite Wrestling Academy",
+      "clubName": "Elite Wrestling",
+      "primaryColor": "#0f52ba",
+      "primaryForeground": "#ffffff",
+      "secondaryColor": "#ffffff",
+      "secondaryForeground": "#0f172a",
+      "bg": "#f8fafc",
+      "card": "#ffffff",
+      "border": "#e2e8f0",
+      "muted": "#94a3b8",
+      "success": "#16a34a",
+      "warning": "#f59e0b",
+      "danger": "#dc2626",
+      "logo": "/logos/elite.png"
+    },
+    {
+      "id": "club-2",
+      "name": "Thunder Wrestling Club",
+      "clubName": "Thunder Wrestling",
+      "primaryColor": "#dc2626",
+      "primaryForeground": "#ffffff",
+      "secondaryColor": "#ffffff",
+      "secondaryForeground": "#0f172a",
+      "bg": "#f8fafc",
+      "card": "#ffffff",
+      "border": "#e2e8f0",
+      "muted": "#94a3b8",
+      "success": "#16a34a",
+      "warning": "#f59e0b",
+      "danger": "#dc2626",
+      "logo": "/logos/thunder.png"
+    }
+  ]
+}

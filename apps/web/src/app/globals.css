@@ -29,6 +29,19 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    
+    /* Wrestling Club Custom Colors */
+    --color-primary: 221 83% 53%;
+    --color-primary-foreground: 0 0% 100%;
+    --color-secondary: 0 0% 100%;
+    --color-secondary-foreground: 222 84% 5%;
+    --color-bg: 210 40% 98%;
+    --color-card: 0 0% 100%;
+    --color-border: 214 32% 91%;
+    --color-muted: 215 16% 47%;
+    --color-success: 142 76% 36%;
+    --color-warning: 38 92% 50%;
+    --color-danger: 0 84% 60%;
   }
 
   .dark {
@@ -102,4 +115,102 @@
     #0983df 127.55%
   );
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+/* Wrestling Club Design System Utilities */
+@layer utilities {
+  .text-display {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  
+  .text-h1 {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  
+  .text-h2 {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  
+  .text-body {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  
+  .text-caption {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  
+  .radius-sm {
+    border-radius: 6px;
+  }
+  
+  .radius-md {
+    border-radius: 10px;
+  }
+  
+  .radius-lg {
+    border-radius: 14px;
+  }
+  
+  .shadow-custom {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+  
+  .spacing-1 { @apply p-1; }
+  .spacing-2 { @apply p-2; }
+  .spacing-3 { @apply p-3; }
+  .spacing-4 { @apply p-4; }
+  .spacing-5 { @apply p-5; }
+  .spacing-6 { @apply p-6; }
+  .spacing-8 { @apply p-8; }
+  
+  /* Custom color utilities */
+  .bg-wrestling-primary {
+    background-color: hsl(var(--color-primary));
+  }
+  
+  .text-wrestling-primary {
+    color: hsl(var(--color-primary));
+  }
+  
+  .bg-wrestling-secondary {
+    background-color: hsl(var(--color-secondary));
+  }
+  
+  .text-wrestling-secondary {
+    color: hsl(var(--color-secondary-foreground));
+  }
+  
+  .bg-wrestling-success {
+    background-color: hsl(var(--color-success));
+  }
+  
+  .text-wrestling-success {
+    color: hsl(var(--color-success));
+  }
+  
+  .bg-wrestling-warning {
+    background-color: hsl(var(--color-warning));
+  }
+  
+  .text-wrestling-warning {
+    color: hsl(var(--color-warning));
+  }
+  
+  .bg-wrestling-danger {
+    background-color: hsl(var(--color-danger));
+  }
+  
+  .text-wrestling-danger {
+    color: hsl(var(--color-danger));
+  }
 }
