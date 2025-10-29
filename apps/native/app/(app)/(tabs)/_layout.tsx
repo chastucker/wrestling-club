@@ -1,8 +1,8 @@
-import { Tabs } from "expo-router";
-import React from "react";
-import { Icon } from "@/components/ui/icon";
-import { useUserRole } from "@/hooks/useUserRole";
-import { getTabsForRole } from "@/lib/navigation";
+import { Tabs } from 'expo-router';
+import React from 'react';
+import { Icon } from '@/components/ui/icon';
+import { useUserRole } from '@/hooks/useUserRole';
+import { getTabsForRole } from '@/lib/navigation';
 
 export default function TabLayout() {
   const { activeRole } = useUserRole();
@@ -11,15 +11,14 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#0f52ba",
-        tabBarInactiveTintColor: "#94a3b8",
+        tabBarActiveTintColor: '#0f52ba',
+        tabBarInactiveTintColor: '#94a3b8',
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#ffffff",
-          borderTopColor: "#e2e8f0",
+          backgroundColor: '#ffffff',
+          borderTopColor: '#e2e8f0',
         },
-      }}
-    >
+      }}>
       {tabs.map((tab) => (
         <Tabs.Screen
           key={tab.name}
