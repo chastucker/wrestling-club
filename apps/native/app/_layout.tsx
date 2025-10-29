@@ -6,6 +6,7 @@ import "../global.css";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import tokenCache from "@/utils/tokenCache";
+import { PortalHost } from "@rn-primitives/portal";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL || "");
 
@@ -35,6 +36,7 @@ export default function RootLayout() {
         </Stack>
         <StatusBar style="auto" />
       </ConvexProvider>
+      <PortalHost />
     </ClerkProvider>
   );
 }
