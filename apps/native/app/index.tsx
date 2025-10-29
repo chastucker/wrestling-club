@@ -1,51 +1,29 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
-import { Link, router } from "expo-router";
+import { useEffect } from "react";
+import { router } from "expo-router";
+import { useAuth } from "@/contexts/AuthContext";
+import { View } from "react-native";
+import { Text } from "@/components/ui/text";
 
 export default function IndexScreen() {
-  return (
-    <View className="flex-1 bg-gray-50 justify-center items-center p-5">
-      <View className="bg-white rounded-lg p-8 w-full max-w-sm shadow-lg">
-        <Text className="text-3xl font-bold text-gray-800 text-center mb-4">
-          Wrestling Club
-        </Text>
+  const { user, isLoading } = useAuth();
 
-        <Text className="text-gray-600 text-center mb-8 leading-6">
-          Welcome to the Wrestling Club app. Join our community and start your
-          wrestling journey.
-        </Text>
+  useEffect(() => {
+    if (!isLoading) {
+      if (user) {
+        router.replace("/(app)");
+      } else {
+        router.replace("/(auth)/sign-in");
+      }
+    }
+  }, [user, isLoading]);
 
-        <SignedOut>
-          <View className="items-center">
-            <Link href="/sign-in" asChild>
-              <TouchableOpacity className="bg-blue-600 py-3 px-8 rounded-lg w-full mb-4">
-                <Text className="text-white text-center font-semibold text-lg">
-                  Sign In
-                </Text>
-              </TouchableOpacity>
-            </Link>
-            <Text className="text-gray-500 text-center text-sm">
-              Don&apos;t have an account? Sign in to create one.
-            </Text>
-          </View>
-        </SignedOut>
-
-        <SignedIn>
-          <View className="items-center">
-            <TouchableOpacity
-              className="bg-green-600 py-3 px-8 rounded-lg w-full mb-4"
-              onPress={() => router.push("/dashboard")}
-            >
-              <Text className="text-white text-center font-semibold text-lg">
-                Go to Dashboard
-              </Text>
-            </TouchableOpacity>
-            <Text className="text-gray-500 text-center text-sm">
-              Welcome back! Access your dashboard.
-            </Text>
-          </View>
-        </SignedIn>
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-background">
+        <Text className="text-lg text-foreground">Loading...</Text>
       </View>
-    </View>
-  );
+    );
+  }
+
+  return null;
 }
