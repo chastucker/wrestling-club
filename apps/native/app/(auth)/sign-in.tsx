@@ -1,111 +1,145 @@
-import React, { useState } from "react";
-import { View, ScrollView, Alert } from "react-native";
-import { Link, router } from "expo-router";
+import { View, Alert, ActivityIndicator } from "react-native";
+import { useSignIn } from "@clerk/clerk-expo";
+import { router } from "expo-router";
+import { z } from "zod/v4";
+import { app } from "@packages/config";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import { Text } from "@/components/ui/text";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { useAuth } from "@/contexts/AuthContext";
-import { SignInForm } from "@/types";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+
+const authFormSchema = z.object({
+  emailAddress: z.email(),
+  password: z.string().min(8),
+});
 
 export default function SignInScreen() {
-  const { signIn, isLoading, error } = useAuth();
-  const [form, setForm] = useState<SignInForm>({
-    email: "",
-    password: "",
+  const { signIn, setActive, isLoaded } = useSignIn();
+
+  const form = useForm<z.infer<typeof authFormSchema>>({
+    resolver: zodResolver(authFormSchema),
+    defaultValues: {
+      emailAddress: "",
+      password: "",
+    },
   });
 
-  const handleSignIn = async () => {
+  const onSubmit = async (values: z.infer<typeof authFormSchema>) => {
+    if (!isLoaded) {
+      return;
+    }
+
     try {
-      await signIn(form.email, form.password);
-      router.replace("/(app)");
-    } catch (err) {
-      Alert.alert("Sign In Failed", error || "Please check your credentials");
+      const result = await signIn.create({
+        identifier: values.emailAddress,
+        password: values.password,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/dashboard");
+      } else {
+        // Handle other statuses
+        console.log("Sign in not complete");
+      }
+    } catch (err: any) {
+      console.log("got here");
+      Alert.alert("Error", err.errors?.[0]?.message || "An error occurred");
     }
   };
 
   return (
-    <ScrollView className="flex-1 bg-background">
-      <View className="flex-1 justify-center p-6">
-        <View className="mb-8">
-          <Text className="text-3xl font-bold text-foreground text-center mb-2">
-            Welcome Back
-          </Text>
-          <Text className="text-muted-foreground text-center">
-            Sign in to your wrestling club account
-          </Text>
-        </View>
-
-        <Card className="p-6">
-          <View className="space-y-4">
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">
-                Email
-              </Text>
-              <Input
-                placeholder="Enter your email"
-                value={form.email}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, email: text }))
-                }
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-              />
+    <View className="flex-1 bg-background px-5 py-10">
+      <View className="flex-1 items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader className="flex-row">
+            <View className="flex-1 gap-1.5">
+              <CardTitle>Sign in to {app.clubName}</CardTitle>
+              <CardDescription>Enter your details to continue</CardDescription>
             </View>
+          </CardHeader>
+          <CardContent>
+            <View className="w-full justify-center gap-4">
+              <View className="gap-2">
+                <Label>Email</Label>
+                <Controller
+                  control={form.control}
+                  name="emailAddress"
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      placeholder="you@example.com"
+                      aria-invalid={!!form.formState.errors.emailAddress}
+                    />
+                  )}
+                />
+                {form.formState.errors.emailAddress && (
+                  <Text variant="muted">
+                    {form.formState.errors.emailAddress.message}
+                  </Text>
+                )}
+              </View>
 
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">
-                Password
-              </Text>
-              <Input
-                placeholder="Enter your password"
-                value={form.password}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, password: text }))
-                }
-                secureTextEntry
-                autoComplete="password"
-              />
+              <View className="gap-2">
+                <Label>Password</Label>
+                <Controller
+                  control={form.control}
+                  name="password"
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      secureTextEntry
+                      placeholder="••••••••"
+                      aria-invalid={!!form.formState.errors.password}
+                    />
+                  )}
+                />
+                {form.formState.errors.password && (
+                  <Text variant="muted">
+                    {form.formState.errors.password.message}
+                  </Text>
+                )}
+              </View>
             </View>
-
+          </CardContent>
+          <CardFooter className="flex-col gap-2">
             <Button
-              onPress={handleSignIn}
-              disabled={isLoading || !form.email || !form.password}
-              className="bg-primary mt-6"
+              onPress={form.handleSubmit(onSubmit)}
+              disabled={form.formState.isSubmitting || !isLoaded}
+              className="w-full"
             >
-              <Text className="text-primary-foreground font-medium">
-                {isLoading ? "Signing In..." : "Sign In"}
-              </Text>
+              {form.formState.isSubmitting ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text>Sign In</Text>
+              )}
             </Button>
-
-            {error && (
-              <Text className="text-destructive text-sm text-center mt-2">
-                {error}
-              </Text>
-            )}
-          </View>
+            <Button
+              variant="outline"
+              className="w-full"
+              onPress={() => router.replace("/(auth)/sign-up")}
+            >
+              <Text>sign up</Text>
+            </Button>
+          </CardFooter>
         </Card>
-
-        <View className="mt-6">
-          <Text className="text-muted-foreground text-center">
-            Don't have an account?{" "}
-            <Link href="/(auth)/sign-up" asChild>
-              <Text className="text-primary font-medium">Sign up</Text>
-            </Link>
-          </Text>
-        </View>
-
-        <View className="mt-8 p-4 bg-muted rounded-lg">
-          <Text className="text-sm text-muted-foreground text-center mb-2">
-            Demo Credentials:
-          </Text>
-          <Text className="text-xs text-muted-foreground text-center">
-            Email: john@example.com{"\n"}
-            Password: password123
-          </Text>
-        </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }

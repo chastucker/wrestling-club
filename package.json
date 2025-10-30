@@ -6,6 +6,7 @@
     "build": "turbo run build",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore",
+    "sync-theme": "pnpm --filter native-app run sync-theme && pnpm --filter web-app run sync-theme",
     "dev:web": "pnpm --filter web-app dev",
     "dev:native": "pnpm --filter native-app dev",
     "dev:backend": "pnpm --filter @packages/backend dev",

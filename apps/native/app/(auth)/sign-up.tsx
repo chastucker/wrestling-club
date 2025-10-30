@@ -1,196 +1,205 @@
-import React, { useState } from "react";
-import { View, ScrollView, Alert } from "react-native";
+import React from "react";
+import {
+  View,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+  Pressable,
+  TextInput,
+} from "react-native";
 import { Link, router } from "expo-router";
+import { z } from "zod/v4";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Text } from "@/components/ui/text";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
 import { useAuth } from "@/contexts/AuthContext";
-import { SignUpForm, UserRole } from "@/types";
+import { UserRole } from "@/types";
+import { app } from "@packages/config";
 
-const ROLES: { value: UserRole; label: string; description: string }[] = [
-  { value: "wrestler", label: "Wrestler", description: "I am a wrestler" },
-  {
-    value: "parent",
-    label: "Parent",
-    description: "I am a parent of a wrestler",
-  },
-  { value: "coach", label: "Coach", description: "I am a coach" },
+const ROLES: { value: UserRole; label: string }[] = [
+  { value: "coach", label: "Coach" },
+  { value: "parent", label: "Parent" },
+  { value: "wrestler", label: "Wrestler" },
 ];
+
+const signUpSchema = z.object({
+  emailAddress: z.email(),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  role: z.enum(["coach", "parent", "wrestler"]),
+});
 
 export default function SignUpScreen() {
   const { signUp, isLoading, error } = useAuth();
-  const [form, setForm] = useState<SignUpForm>({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    role: "wrestler",
+
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      emailAddress: "",
+      password: "",
+      role: "parent",
+    },
   });
 
-  const handleSignUp = async () => {
-    if (form.password !== form.confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
-      return;
-    }
-
+  const onSubmit: SubmitHandler<z.infer<typeof signUpSchema>> = async (
+    values,
+  ) => {
     try {
-      await signUp(form.name, form.email, form.password, form.role, form.phone);
-      router.replace("/(app)");
-    } catch (err) {
-      Alert.alert("Sign Up Failed", error || "Please try again");
+      await signUp(
+        "",
+        values.emailAddress,
+        values.password,
+        values.role,
+        undefined,
+      );
+      router.replace("/dashboard");
+    } catch (err: any) {
+      Alert.alert(
+        "Sign Up Failed",
+        err?.message || error || "Please try again",
+      );
     }
   };
 
   return (
     <ScrollView className="flex-1 bg-background">
-      <View className="flex-1 justify-center p-6">
-        <View className="mb-8">
-          <Text className="text-3xl font-bold text-foreground text-center mb-2">
+      <View className="flex-1 justify-center px-6 py-10">
+        <View className="mb-6">
+          <Text className="text-[32px] font-bold text-foreground text-left mb-1">
             Create Account
           </Text>
-          <Text className="text-muted-foreground text-center">
-            Join the wrestling club community
+          <Text className="text-muted-foreground text-left text-base">
+            Join the {app.clubName} platform
           </Text>
         </View>
 
-        <Card className="p-6">
-          <View className="space-y-4">
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">
-                Full Name
-              </Text>
-              <Input
-                placeholder="Enter your full name"
-                value={form.name}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, name: text }))
-                }
-                autoComplete="name"
-              />
-            </View>
+        <View className="gap-6 border border-border rounded-2xl p-6 bg-background shadow-sm shadow-black/5">
+          <View className="gap-3">
+            <Text className="text-sm font-medium text-foreground">
+              Choose Your Role
+            </Text>
+            <Controller
+              control={form.control}
+              name="role"
+              render={({ field: { value, onChange } }) => (
+                <View className="flex-row gap-3">
+                  {ROLES.map((role) => {
+                    const isActive = value === role.value;
+                    return (
+                      <Pressable
+                        key={role.value}
+                        onPress={() => onChange(role.value)}
+                        className={
+                          "flex-1 items-center justify-center rounded-xl border px-4 py-4" +
+                          (isActive
+                            ? " bg-primary border-primary"
+                            : " bg-muted/20 border-border")
+                        }
+                        accessibilityRole="button"
+                      >
+                        <Icon
+                          name={
+                            role.value === "coach"
+                              ? "users"
+                              : role.value === "parent"
+                                ? "user"
+                                : "award"
+                          }
+                          size={22}
+                          color={isActive ? "#fff" : undefined}
+                        />
+                        <Text
+                          className={
+                            "mt-2 text-sm font-medium" +
+                            (isActive
+                              ? " text-primary-foreground"
+                              : " text-foreground")
+                          }
+                        >
+                          {role.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              )}
+            />
+          </View>
 
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">
-                Email
-              </Text>
-              <Input
-                placeholder="Enter your email"
-                value={form.email}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, email: text }))
-                }
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-              />
-            </View>
-
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">
-                Phone (Optional)
-              </Text>
-              <Input
-                placeholder="Enter your phone number"
-                value={form.phone || ""}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, phone: text }))
-                }
-                keyboardType="phone-pad"
-                autoComplete="tel"
-              />
-            </View>
-
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">
-                Role
-              </Text>
-              <View className="flex-row flex-wrap gap-2">
-                {ROLES.map((role) => (
-                  <Button
-                    key={role.value}
-                    onPress={() =>
-                      setForm((prev) => ({ ...prev, role: role.value }))
-                    }
-                    className={`mr-2 mb-2 ${
-                      form.role === role.value ? "bg-primary" : "bg-muted"
-                    }`}
-                  >
-                    <Text
-                      className={`text-sm font-medium ${
-                        form.role === role.value
-                          ? "text-primary-foreground"
-                          : "text-muted-foreground"
-                      }`}
-                    >
-                      {role.label}
-                    </Text>
-                  </Button>
-                ))}
-              </View>
-              <Text className="text-xs text-muted-foreground mt-1">
-                {ROLES.find((r) => r.value === form.role)?.description}
-              </Text>
-            </View>
-
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">
-                Password
-              </Text>
-              <Input
-                placeholder="Create a password"
-                value={form.password}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, password: text }))
-                }
-                secureTextEntry
-                autoComplete="new-password"
-              />
-            </View>
-
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">
-                Confirm Password
-              </Text>
-              <Input
-                placeholder="Confirm your password"
-                value={form.confirmPassword}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, confirmPassword: text }))
-                }
-                secureTextEntry
-                autoComplete="new-password"
-              />
-            </View>
-
-            <Button
-              onPress={handleSignUp}
-              disabled={
-                isLoading ||
-                !form.name ||
-                !form.email ||
-                !form.password ||
-                !form.confirmPassword
-              }
-              className="bg-primary mt-6"
-            >
-              <Text className="text-primary-foreground font-medium">
-                {isLoading ? "Creating Account..." : "Create Account"}
-              </Text>
-            </Button>
-
-            {error && (
-              <Text className="text-destructive text-sm text-center mt-2">
-                {error}
+          <View className="gap-3">
+            <Text className="text-sm font-medium text-foreground">Email</Text>
+            <Controller
+              control={form.control}
+              name="emailAddress"
+              render={({ field: { value, onChange, onBlur } }) => (
+                <TextInput
+                  className="dark:bg-input/30 border-input bg-background text-foreground h-12 w-full rounded-md border px-3 text-base shadow-sm shadow-black/5"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  placeholder="your.email@example.com"
+                />
+              )}
+            />
+            {form.formState.errors.emailAddress && (
+              <Text className="text-muted-foreground">
+                {form.formState.errors.emailAddress.message}
               </Text>
             )}
           </View>
-        </Card>
 
-        <View className="mt-6">
+          <View className="gap-3">
+            <Text className="text-sm font-medium text-foreground">
+              Password
+            </Text>
+            <Controller
+              control={form.control}
+              name="password"
+              render={({ field: { value, onChange, onBlur } }) => (
+                <TextInput
+                  className="dark:bg-input/30 border-input bg-background text-foreground h-12 w-full rounded-md border px-3 text-base shadow-sm shadow-black/5"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  secureTextEntry
+                  placeholder="••••••••"
+                />
+              )}
+            />
+            {form.formState.errors.password && (
+              <Text className="text-muted-foreground">
+                {form.formState.errors.password.message}
+              </Text>
+            )}
+          </View>
+
+          <Pressable
+            onPress={form.handleSubmit(onSubmit)}
+            disabled={form.formState.isSubmitting || isLoading}
+            className="mt-2 h-12 items-center justify-center rounded-md bg-primary"
+          >
+            {form.formState.isSubmitting || isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-primary-foreground font-medium">
+                Continue
+              </Text>
+            )}
+          </Pressable>
+
+          {error && (
+            <Text className="text-destructive text-sm text-center">
+              {error}
+            </Text>
+          )}
+        </View>
+
+        <View className="mt-8">
           <Text className="text-muted-foreground text-center">
             Already have an account?{" "}
-            <Link href="/(auth)/sign-in" asChild>
+            <Link href="/sign-in" asChild>
               <Text className="text-primary font-medium">Sign in</Text>
             </Link>
           </Text>

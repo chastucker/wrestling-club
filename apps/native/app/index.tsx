@@ -1,23 +1,13 @@
-import { useEffect } from "react";
-import { router } from "expo-router";
-import { useAuth } from "@/contexts/AuthContext";
+import { Redirect } from "expo-router";
+
 import { View } from "react-native";
 import { Text } from "@/components/ui/text";
+import { useUser } from "@clerk/clerk-expo";
 
 export default function IndexScreen() {
-  const { user, isLoading } = useAuth();
+  const { isLoaded, user } = useUser();
 
-  useEffect(() => {
-    if (!isLoading) {
-      if (user) {
-        router.replace("/(app)");
-      } else {
-        router.replace("/(auth)/sign-in");
-      }
-    }
-  }, [user, isLoading]);
-
-  if (isLoading) {
+  if (isLoaded) {
     return (
       <View className="flex-1 justify-center items-center bg-background">
         <Text className="text-lg text-foreground">Loading...</Text>
@@ -25,5 +15,9 @@ export default function IndexScreen() {
     );
   }
 
-  return null;
+  if (user) {
+    return <Redirect href="/dashboard" />;
+  }
+
+  return <Redirect href="/(auth)/sign-in" />;
 }

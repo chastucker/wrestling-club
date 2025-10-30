@@ -1,54 +1,80 @@
-import { cn } from '@/lib/utils';
-import type { LucideIcon, LucideProps } from 'lucide-react-native';
-import { cssInterop } from 'nativewind';
+import { cn } from "@/lib/utils";
+import { cssInterop } from "nativewind";
+import { Feather } from "@expo/vector-icons";
+import type { ComponentProps, ComponentType } from "react";
 
-type IconProps = LucideProps & {
-  as: LucideIcon;
+type FeatherName = keyof typeof Feather.glyphMap;
+
+type BaseProps = Omit<ComponentProps<typeof Feather>, "name"> & {
+  className?: string;
+  size?: number;
 };
 
-function IconImpl({ as: IconComponent, ...props }: IconProps) {
+type IconProps = BaseProps &
+  (
+    | { as: ComponentType<any>; name?: never }
+    | { as?: never; name: FeatherName }
+  );
+
+function IconImpl({
+  as: IconComponent,
+  ...props
+}: { as: ComponentType<any> } & BaseProps) {
   return <IconComponent {...props} />;
 }
 
 cssInterop(IconImpl, {
   className: {
-    target: 'style',
+    target: "style",
     nativeStyleToProp: {
-      height: 'size',
-      width: 'size',
+      height: "size",
+      width: "size",
     },
   },
 });
 
 /**
- * A wrapper component for Lucide icons with Nativewind `className` support via `cssInterop`.
- *
- * This component allows you to render any Lucide icon while applying utility classes
- * using `nativewind`. It avoids the need to wrap or configure each icon individually.
- *
- * @component
- * @example
- * ```tsx
- * import { ArrowRight } from 'lucide-react-native';
- * import { Icon } from '@/registry/components/ui/icon';
- *
- * <Icon as={ArrowRight} className="text-red-500" size={16} />
- * ```
- *
- * @param {LucideIcon} as - The Lucide icon component to render.
- * @param {string} className - Utility classes to style the icon using Nativewind.
- * @param {number} size - Icon size (defaults to 14).
- * @param {...LucideProps} ...props - Additional Lucide icon props passed to the "as" icon.
+ * Icon component with two modes:
+ * - Provide `name` to use a Feather icon from `@expo/vector-icons`
+ * - Provide `as` to render any custom icon component
  */
-function Icon({ as: IconComponent, className, size = 14, ...props }: IconProps) {
-  return (
-    <IconImpl
-      as={IconComponent}
-      className={cn('text-foreground', className)}
-      size={size}
-      {...props}
-    />
-  );
+function Icon(props: IconProps) {
+  const {
+    className,
+    size = 14,
+    color,
+  } = props as BaseProps & {
+    name?: FeatherName;
+    as?: ComponentType<any>;
+  };
+
+  if ("as" in props && props.as) {
+    const { as, ...other } = props as { as: ComponentType<any> } & BaseProps;
+    return (
+      <IconImpl
+        as={as}
+        className={cn("text-foreground", className)}
+        size={size}
+        color={color}
+        {...other}
+      />
+    );
+  }
+
+  if ("name" in props && props.name) {
+    const { name, ...other } = props as { name: FeatherName } & BaseProps;
+    return (
+      <IconImpl
+        as={(p) => <Feather name={name} {...p} />}
+        className={cn("text-foreground", className)}
+        size={size}
+        color={color}
+        {...other}
+      />
+    );
+  }
+
+  throw new Error("Icon: either `name` or `as` prop is required");
 }
 
 export { Icon };
