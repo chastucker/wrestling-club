@@ -42,15 +42,61 @@ function main() {
 
   // Safer: use dynamic import via require('esbuild-register') if available. For simplicity,
   // we will parse the small object from the source file.
-  const configPath = require.resolve("@packages/config/index.ts", {
-    paths: [process.cwd()],
-  });
+  // Resolve the package root first, then find index.ts
+  let configPath;
+  try {
+    // Try resolving the subpath first
+    configPath = require.resolve("@packages/config/index.ts", {
+      paths: [process.cwd()],
+    });
+  } catch (_e) {
+    // Fallback: resolve the package root and append index.ts
+    try {
+      const pkgRoot = require.resolve("@packages/config", {
+        paths: [process.cwd()],
+      });
+      // Find the package directory (go up from the resolved file)
+      const pkgDir = path.dirname(pkgRoot);
+      configPath = path.join(pkgDir, "index.ts");
+    } catch (_e2) {
+      // Final fallback: find from workspace root
+      // Go up from scripts to native app root, then to monorepo root, then to packages/config
+      const workspaceRoot = path.resolve(__dirname, "..", "..", "..");
+      configPath = path.join(workspaceRoot, "packages", "config", "index.ts");
+      if (!fs.existsSync(configPath)) {
+        throw new Error(`Could not find config file at ${configPath}`);
+      }
+    }
+  }
   const src = fs.readFileSync(configPath, "utf8");
-  // Naive parse: look for primaryColor, etc.
-  function extract(key) {
-    const rx = new RegExp(`${key}\\s*:\\s*"(#[0-9a-fA-F]{3,6})"`);
-    const m = src.match(rx);
-    return m ? m[1] : null;
+  // Find which config is exported: export const app = appConfigs[X];
+  const exportMatch = src.match(
+    /export\s+const\s+app\s*=\s*appConfigs\[(\d+)\]/,
+  );
+  const configIndex = exportMatch ? parseInt(exportMatch[1], 10) : 1; // Default to index 1
+
+  // Find all config objects and extract from the exported one
+  // Split by config objects (each starts with { and has primaryColor)
+  const configMatches = src.matchAll(
+    /appConfigs\[\d+\]\s*=\s*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}/g,
+  );
+  const configArray = Array.from(configMatches);
+
+  // Extract from the correct config object
+  function extract(key, fromConfigIndex = configIndex) {
+    // If we have config objects parsed, use the one at the specified index
+    if (configArray.length > fromConfigIndex) {
+      const configContent = configArray[fromConfigIndex][1];
+      const rx = new RegExp(`${key}\\s*:\\s*"(#[0-9a-fA-F]{3,6})"`);
+      const m = configContent.match(rx);
+      return m ? m[1] : null;
+    }
+    // Fallback: find all matches and use the one at the specified index
+    const rx = new RegExp(`${key}\\s*:\\s*"(#[0-9a-fA-F]{3,6})"`, "g");
+    const matches = Array.from(src.matchAll(rx));
+    return matches.length > fromConfigIndex
+      ? matches[fromConfigIndex][1]
+      : null;
   }
   const app = {
     primaryColor: extract("primaryColor"),

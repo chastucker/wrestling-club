@@ -73,14 +73,45 @@ function updateCssVariables(css, updates) {
 }
 
 function main() {
-  const configPath = require.resolve("@packages/config/index.ts", {
-    paths: [process.cwd()],
-  });
+  // Resolve the package root first, then find index.ts
+  let configPath;
+  try {
+    // Try resolving the subpath first
+    configPath = require.resolve("@packages/config/index.ts", {
+      paths: [process.cwd()],
+    });
+  } catch (_e) {
+    // Fallback: resolve the package root and append index.ts
+    try {
+      const pkgRoot = require.resolve("@packages/config", {
+        paths: [process.cwd()],
+      });
+      // Find the package directory (go up from the resolved file)
+      const pkgDir = path.dirname(pkgRoot);
+      configPath = path.join(pkgDir, "index.ts");
+    } catch (_e2) {
+      // Final fallback: find from workspace root
+      // Go up from scripts to web app root, then to monorepo root, then to packages/config
+      const workspaceRoot = path.resolve(__dirname, "..", "..", "..");
+      configPath = path.join(workspaceRoot, "packages", "config", "index.ts");
+      if (!fs.existsSync(configPath)) {
+        throw new Error(`Could not find config file at ${configPath}`);
+      }
+    }
+  }
   const src = fs.readFileSync(configPath, "utf8");
+  // Find which config is exported: export const app = appConfigs[X];
+  const exportMatch = src.match(
+    /export\s+const\s+app\s*=\s*appConfigs\[(\d+)\]/,
+  );
+  const configIndex = exportMatch ? parseInt(exportMatch[1], 10) : 1; // Default to index 1
+
+  // Extract from the correct config object
   const pick = (key) => {
-    const rx = new RegExp(`${key}\\s*:\\s*"(#[0-9a-fA-F]{3,6})"`);
-    const m = src.match(rx);
-    return m ? m[1] : null;
+    // Find all matches and use the one at the exported config index
+    const rx = new RegExp(`${key}\\s*:\\s*"(#[0-9a-fA-F]{3,6})"`, "g");
+    const matches = Array.from(src.matchAll(rx));
+    return matches.length > configIndex ? matches[configIndex][1] : null;
   };
 
   const app = {

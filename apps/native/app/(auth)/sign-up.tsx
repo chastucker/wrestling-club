@@ -12,7 +12,7 @@ import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Text } from "@/components/ui/text";
-import { Icon } from "@/components/ui/icon";
+import { Feather } from "@expo/vector-icons";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserRole } from "@/types";
 import { app } from "@packages/config";
@@ -97,20 +97,20 @@ export default function SignUpScreen() {
                         }
                         accessibilityRole="button"
                       >
-                        <Icon
-                          name={
+                        <Feather
+                          name={(
                             role.value === "coach"
                               ? "users"
                               : role.value === "parent"
                                 ? "user"
                                 : "award"
-                          }
+                          ) as any}
                           size={22}
                           color={isActive ? "#fff" : undefined}
                         />
                         <Text
                           className={
-                            "mt-2 text-sm font-medium" +
+                            "mt-2 text-sm font-medium text-white" +
                             (isActive
                               ? " text-primary-foreground"
                               : " text-foreground")

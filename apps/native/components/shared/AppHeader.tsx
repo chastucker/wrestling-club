@@ -2,7 +2,7 @@ import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Avatar } from "@/components/ui/avatar";
-import { Icon } from "@/components/ui/icon";
+import { Feather } from "@expo/vector-icons";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { RoleSwitcher } from "./RoleSwitcher";
@@ -38,7 +38,7 @@ export function AppHeader({
         <View className="flex-row items-center space-x-3">
           {onNotificationPress && (
             <TouchableOpacity onPress={onNotificationPress}>
-              <Icon name="bell" size={24} className="text-muted-foreground" />
+              <Feather name="bell" size={24} />
             </TouchableOpacity>
           )}
 

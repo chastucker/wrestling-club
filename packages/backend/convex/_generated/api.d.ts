@@ -8,7 +8,12 @@
  * @module
  */
 
-import type * as notes from "../notes.js";
+import type * as profile from "../profile.js";
+import type * as schema_attendance from "../schema/attendance.js";
+import type * as schema_index from "../schema/index.js";
+import type * as schema_profile from "../schema/profile.js";
+import type * as schema_sessions from "../schema/sessions.js";
+import type * as schema_tournaments from "../schema/tournaments.js";
 import type * as utils from "../utils.js";
 
 import type {
@@ -26,7 +31,12 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  notes: typeof notes;
+  profile: typeof profile;
+  "schema/attendance": typeof schema_attendance;
+  "schema/index": typeof schema_index;
+  "schema/profile": typeof schema_profile;
+  "schema/sessions": typeof schema_sessions;
+  "schema/tournaments": typeof schema_tournaments;
   utils: typeof utils;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

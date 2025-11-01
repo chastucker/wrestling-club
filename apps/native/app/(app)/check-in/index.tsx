@@ -3,7 +3,7 @@ import { View, Alert } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Icon } from "@/components/ui/icon";
+import { Feather } from "@expo/vector-icons";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { useAuth } from "@/contexts/AuthContext";
@@ -75,7 +75,7 @@ export default function CheckInScreen() {
         <EmptyState
           title="No Practice Available"
           description="There are no upcoming practices to check in to."
-          icon="calendar.badge.exclamationmark"
+          icon="calendar"
         />
       </View>
     );
@@ -89,13 +89,9 @@ export default function CheckInScreen() {
         {/* Practice Info */}
         <Card className="p-6 mb-6">
           <View className="items-center">
-            <Icon
-              name={isCheckedIn ? "checkmark.circle.fill" : "calendar"}
-              size={64}
-              className={
-                isCheckedIn ? "text-success mb-4" : "text-primary mb-4"
-              }
-            />
+            <View className={isCheckedIn ? "mb-4" : "mb-4"}>
+              <Feather name={isCheckedIn ? "check-circle" : "calendar"} size={64} />
+            </View>
             <Text className="text-2xl font-bold text-foreground mb-2">
               {currentPractice.sessionName}
             </Text>
@@ -147,15 +143,9 @@ export default function CheckInScreen() {
             className={`py-4 ${isCheckedIn ? "bg-muted" : "bg-primary"}`}
           >
             <View className="flex-row items-center">
-              <Icon
-                name={isCheckedIn ? "checkmark" : "arrow.right.circle"}
-                size={24}
-                className={`mr-2 ${
-                  isCheckedIn
-                    ? "text-muted-foreground"
-                    : "text-primary-foreground"
-                }`}
-              />
+              <View className="mr-2">
+                <Feather name={isCheckedIn ? "check" : "arrow-right-circle"} size={24} />
+              </View>
               <Text
                 className={`text-lg font-semibold ${
                   isCheckedIn

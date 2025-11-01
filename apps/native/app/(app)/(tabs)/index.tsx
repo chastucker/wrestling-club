@@ -204,7 +204,7 @@ export default function DashboardScreen() {
                 <StatTile
                   title="Check In"
                   value="Practice"
-                  icon="checkmark.circle"
+                  icon="check-circle"
                   onPress={() => router.push("/(app)/check-in")}
                   className="bg-success"
                 />

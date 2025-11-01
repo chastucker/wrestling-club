@@ -16,6 +16,23 @@ const appConfigs = [
     danger: "#dc2626",
     logo: "/logos/elite.png",
   },
+  {
+    id: "de305d54-75b4-431b-adb2-eb6b9e546014",
+    name: "Doughboys 2 Wrestling Club",
+    clubName: "Doughboys 2",
+    primaryColor: "#a50000",
+    primaryForeground: "#ffffff",
+    secondaryColor: "#ffffff",
+    secondaryForeground: "#e20000",
+    bg: "#f8fafc",
+    card: "#ffffff",
+    border: "#e2e8f0",
+    muted: "#94a3b8",
+    success: "#16a34a",
+    warning: "#f59e0b",
+    danger: "#dc2626",
+    logo: "/logos/elite.png",
+  },
 ];
 
 export const app = appConfigs[0];

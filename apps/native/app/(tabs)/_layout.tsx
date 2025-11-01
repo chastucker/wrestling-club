@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { Icon } from "@/components/ui/icon";
+import { Feather } from "@expo/vector-icons";
 import { useUserRole } from "@/hooks/useUserRole";
 import { getTabsForRole } from "@/lib/navigation";
 
@@ -27,7 +27,7 @@ export default function TabLayout() {
           options={{
             title: tab.title,
             tabBarIcon: ({ color }) => (
-              <Icon name={tab.icon} size={24} color={color} />
+              <Feather name={tab.icon as any} size={24} color={color} />
             ),
           }}
         />

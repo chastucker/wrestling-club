@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon';
+import { Feather } from '@expo/vector-icons';
 import { NativeOnlyAnimatedView } from '@/components/ui/native-only-animated-view';
 import { cn } from '@/lib/utils';
 import * as DialogPrimitive from '@rn-primitives/dialog';
@@ -77,10 +77,7 @@ function DialogContent({
               })
             )}
             hitSlop={12}>
-            <Icon
-              as={X}
-              className={cn('text-accent-foreground web:pointer-events-none size-4 shrink-0')}
-            />
+            <Feather name="x" size={16} />
             <Text className="sr-only">Close</Text>
           </DialogPrimitive.Close>
         </DialogPrimitive.Content>

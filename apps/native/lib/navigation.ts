@@ -2,11 +2,11 @@ import { UserRole } from "../types";
 
 export function getTabsForRole(role: UserRole) {
   const baseTabs = [
-    { name: "index", title: "Home", icon: "house.fill" },
+    { name: "index", title: "Home", icon: "home" },
     { name: "schedule", title: "Schedule", icon: "calendar" },
-    { name: "sessions", title: "Sessions", icon: "person.3.fill" },
-    { name: "tournaments", title: "Tournaments", icon: "trophy.fill" },
-    { name: "more", title: "More", icon: "ellipsis.circle" },
+    { name: "sessions", title: "Sessions", icon: "users" },
+    { name: "tournaments", title: "Tournaments", icon: "award" },
+    { name: "more", title: "More", icon: "more-horizontal" },
   ];
 
   // All roles get the same base tabs

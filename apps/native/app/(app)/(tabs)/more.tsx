@@ -2,7 +2,7 @@ import React from "react";
 import { ScrollView, View, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Card } from "@/components/ui/card";
-import { Icon } from "@/components/ui/icon";
+import { Feather } from "@expo/vector-icons";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,23 +29,15 @@ function MenuItem({
     <TouchableOpacity onPress={onPress}>
       <Card className="p-4 mb-2">
         <View className="flex-row items-center">
-          <Icon
-            name={icon}
-            size={24}
-            className={
-              destructive ? "text-destructive mr-3" : "text-primary mr-3"
-            }
-          />
+          <View className="mr-3">
+            <Feather name={icon as any} size={24} />
+          </View>
           <Text
             className={`flex-1 text-base ${destructive ? "text-destructive" : "text-foreground"}`}
           >
             {title}
           </Text>
-          <Icon
-            name="chevron.right"
-            size={16}
-            className="text-muted-foreground"
-          />
+          <Feather name="chevron-right" size={16} />
         </View>
       </Card>
     </TouchableOpacity>
@@ -70,7 +62,7 @@ export default function MoreScreen() {
     },
     {
       title: "Check In",
-      icon: "checkmark.circle",
+      icon: "check-circle",
       onPress: () => router.push("/(app)/check-in"),
       show: permissions.canCheckIn,
     },

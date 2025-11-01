@@ -2,7 +2,7 @@ import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
-import { Icon } from "@/components/ui/icon";
+import { Feather } from "@expo/vector-icons";
 
 interface StatTileProps {
   title: string;
@@ -35,7 +35,7 @@ export function StatTile({
         </View>
         {icon && (
           <View className="ml-4">
-            <Icon name={icon} size={24} className="text-primary" />
+            <Feather name={icon as any} size={24} />
           </View>
         )}
       </View>

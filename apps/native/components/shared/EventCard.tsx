@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from "react-native";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Badge } from "@/components/ui/badge";
-import { Icon } from "@/components/ui/icon";
+import { Feather } from "@expo/vector-icons";
 import { formatDate, formatTime, getRelativeTime } from "@/lib/dateUtils";
 import { Practice, Tournament } from "@/types";
 
@@ -41,22 +41,18 @@ export function EventCard({
             {eventName}
           </Text>
           <View className="flex-row items-center mb-1">
-            <Icon
-              name="calendar"
-              size={16}
-              className="text-muted-foreground mr-2"
-            />
+            <View className="mr-2">
+              <Feather name="calendar" size={16} />
+            </View>
             <Text className="text-sm text-muted-foreground">
               {formatDate(eventDate)}
               {eventTime && ` • ${formatTime(eventTime)}`}
             </Text>
           </View>
           <View className="flex-row items-center">
-            <Icon
-              name="location"
-              size={16}
-              className="text-muted-foreground mr-2"
-            />
+            <View className="mr-2">
+              <Feather name="map-pin" size={16} />
+            </View>
             <Text className="text-sm text-muted-foreground">
               {eventLocation}
             </Text>

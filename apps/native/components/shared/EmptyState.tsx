@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { Text } from "@/components/ui/text";
-import { Icon } from "@/components/ui/icon";
+import { Feather } from "@expo/vector-icons";
 import { Button } from "@/components/ui/button";
 
 interface EmptyStateProps {
@@ -16,7 +16,7 @@ interface EmptyStateProps {
 export function EmptyState({
   title,
   description,
-  icon = "exclamationmark.triangle",
+  icon = "alert-triangle",
   actionLabel,
   onAction,
   className = "",
@@ -24,7 +24,9 @@ export function EmptyState({
   return (
     <View className={`flex-1 items-center justify-center p-8 ${className}`}>
       <View className="items-center">
-        <Icon name={icon} size={64} className="text-muted-foreground mb-4" />
+        <View className="mb-4">
+          <Feather name={icon as any} size={64} />
+        </View>
         <Text className="text-xl font-semibold text-foreground mb-2 text-center">
           {title}
         </Text>

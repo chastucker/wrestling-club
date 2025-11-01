@@ -1,10 +1,11 @@
-import { View, Alert, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { useSignIn } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 import { z } from "zod/v4";
 import { app } from "@packages/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import Toast from "react-native-toast-message";
 import { Text } from "@/components/ui/text";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -47,14 +48,26 @@ export default function SignInScreen() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        Toast.show({
+          type: "success",
+          text1: "Signed in successfully",
+          text2: "Welcome back!",
+        });
         router.push("/dashboard");
       } else {
-        // Handle other statuses
-        console.log("Sign in not complete");
+        Toast.show({
+          type: "info",
+          text1: "Sign in incomplete",
+          text2: "Please complete the sign-in process",
+        });
       }
     } catch (err: any) {
-      console.log("got here");
-      Alert.alert("Error", err.errors?.[0]?.message || "An error occurred");
+      Toast.show({
+        type: "error",
+        text1: "Sign in failed",
+        text2:
+          err.errors?.[0]?.message || "An error occurred. Please try again.",
+      });
     }
   };
 

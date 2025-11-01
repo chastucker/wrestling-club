@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon';
+import { Feather } from '@expo/vector-icons';
 import { cn } from '@/lib/utils';
 import * as CheckboxPrimitive from '@rn-primitives/checkbox';
 import { Check } from 'lucide-react-native';
@@ -34,12 +34,7 @@ function Checkbox({
       {...props}>
       <CheckboxPrimitive.Indicator
         className={cn('bg-primary h-full w-full items-center justify-center', indicatorClassName)}>
-        <Icon
-          as={Check}
-          size={12}
-          strokeWidth={Platform.OS === 'web' ? 2.5 : 3.5}
-          className={cn('text-primary-foreground', iconClassName)}
-        />
+        <Feather name="check" size={12} />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );
