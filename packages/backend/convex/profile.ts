@@ -9,6 +9,10 @@ export const createProfile = mutation({
       v.literal("parent"),
     ),
     clubId: v.string(),
+    firstName: v.string(),
+    lastName: v.string(),
+    city: v.string(),
+    state: v.string(),
   },
   handler: async (ctx, args) => {
     const userId = (await ctx.auth.getUserIdentity())?.subject;
@@ -16,10 +20,17 @@ export const createProfile = mutation({
       throw new Error("User not found");
     }
 
+    const existingProfile = await ctx.db
+      .query("profile")
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .first();
+    if (existingProfile) {
+      throw new Error("Profile already exists");
+    }
+
     return await ctx.db.insert("profile", {
       userId,
-      role: args.role,
-      clubId: args.clubId,
+      ...args,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });

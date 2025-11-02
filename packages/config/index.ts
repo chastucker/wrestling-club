@@ -14,7 +14,7 @@ const appConfigs = [
     success: "#16a34a",
     warning: "#f59e0b",
     danger: "#dc2626",
-    logo: "/logos/elite.png",
+    logo: "dwc",
   },
   {
     id: "de305d54-75b4-431b-adb2-eb6b9e546014",

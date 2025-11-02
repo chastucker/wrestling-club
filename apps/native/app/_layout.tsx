@@ -22,7 +22,13 @@ export const unstable_settings = {
 
 function ToastWrapper() {
   const insets = useSafeAreaInsets();
-  return <Toast config={toastConfig} topOffset={insets.top} />;
+  return (
+    <Toast
+      config={toastConfig}
+      topOffset={insets.top + 10}
+      visibilityTime={4000}
+    />
+  );
 }
 
 export default function RootLayout() {

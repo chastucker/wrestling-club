@@ -29,6 +29,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.65.0(react@19.1.0))
+      '@packages/backend':
+        specifier: workspace:*
+        version: link:../../packages/backend
       '@packages/config':
         specifier: workspace:*
         version: link:../../packages/config

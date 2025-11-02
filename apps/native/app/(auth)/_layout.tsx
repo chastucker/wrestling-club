@@ -4,7 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AuthLayout() {
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      className="flex-1 bg-background"
+      edges={["top", "left", "right"]}
+    >
       <Stack>
         <Stack.Screen
           name="sign-in"
