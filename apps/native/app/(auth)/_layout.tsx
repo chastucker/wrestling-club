@@ -1,8 +1,15 @@
-import { Stack } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
+import { Redirect, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AuthLayout() {
+  const { user } = useUser();
+
+  if (user) {
+    return <Redirect href="/(app)/(tabs)" />;
+  }
+
   return (
     <SafeAreaView
       className="flex-1 bg-background"

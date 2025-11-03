@@ -124,7 +124,7 @@ export default function ProfileSetupScreen() {
 
             <View className="w-full max-w-md gap-6">
               <View className="gap-3">
-                <Label>Choose your role</Label>
+                <Label>You are a...</Label>
                 <Controller
                   control={form.control}
                   name="role"

@@ -1,18 +1,20 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ConvexProvider, ConvexReactClient } from "convex/react";
+import { ConvexReactClient } from "convex/react";
 import "../global.css";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/toast-config";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PortalHost } from "@rn-primitives/portal";
-import { ClerkProvider } from "@clerk/clerk-expo";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
+
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import tokenCache from "@/utils/tokenCache";
+import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL || "");
 
@@ -37,7 +39,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
         <AuthProvider>
-          <ConvexProvider client={convex}>
+          <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
             <Stack>
               <Stack.Screen name="index" options={{ headerShown: false }} />
               <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -48,7 +50,7 @@ export default function RootLayout() {
               />
             </Stack>
             <StatusBar style="auto" />
-          </ConvexProvider>
+          </ConvexProviderWithClerk>
           <PortalHost />
         </AuthProvider>
       </ClerkProvider>

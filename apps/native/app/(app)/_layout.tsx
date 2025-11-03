@@ -7,16 +7,10 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { app } from "@packages/config";
 import { Text } from "@/components/ui/text";
 
-function ProfileGuard({ children }: { children: React.ReactNode }) {
+function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isLoaded, user } = useUser();
-  const segments = useSegments();
-  const profile = useQuery(
-    api.profile.getProfile,
-    isLoaded && user ? { clubId: app.id } : "skip",
-  );
 
-  // Show loading screen while Clerk or Convex is loading
-  if (!isLoaded || (user && profile === undefined)) {
+  if (!isLoaded) {
     return (
       <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator size="large" />
@@ -25,23 +19,38 @@ function ProfileGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If user is authenticated but no profile exists, redirect to profile setup
-  // unless already on profile page
-  if (user && profile !== undefined && profile.length === 0) {
-    const inProfile = segments[0] === "(app)" && segments[1] === "profile";
-    if (!inProfile) {
-      return <Redirect href="/(app)/profile" />;
-    }
+  if (!user) {
+    return <Redirect href="/(auth)/sign-in" />;
   }
 
-  // If user has profile, allow access to app
+  return <ProfileGuard>{children}</ProfileGuard>;
+}
+
+function ProfileGuard({ children }: { children: React.ReactNode }) {
+  const profile = useQuery(api.profile.getProfile, { clubId: app.id });
+  const segment = useSegments();
+  const isProfileSetUp = segment[0] === "(app)" && segment[1] === "profile";
+
+  if (profile === undefined) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator size="large" />
+        <Text className="mt-4 text-muted-foreground">Loading...</Text>
+      </View>
+    );
+  }
+
+  if (profile.length === 0 && !isProfileSetUp) {
+    return <Redirect href="/(app)/profile" />;
+  }
+
   return <>{children}</>;
 }
 
 export default function AppLayout() {
   return (
     <>
-      <ProfileGuard>
+      <AuthGuard>
         <Stack>
           <Stack.Screen
             name="profile"
@@ -210,7 +219,7 @@ export default function AppLayout() {
             }}
           />
         </Stack>
-      </ProfileGuard>
+      </AuthGuard>
       <StatusBar style="dark" />
     </>
   );
